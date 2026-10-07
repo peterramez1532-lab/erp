@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HairClinic ERP — Hair Transplant Demo</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#718096;--line:#e7ebf2;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--purple:#7c3aed;--sidebar:#111827}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}
+.app{display:flex;min-height:100vh}.sidebar{width:250px;background:var(--sidebar);color:#fff;padding:22px 16px;position:fixed;inset:0 auto 0 0}.brand{font-size:21px;font-weight:800;padding:8px 10px 28px}.brand span{color:#60a5fa}.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:#cbd5e1;text-align:left;padding:12px;border-radius:10px;cursor:pointer}.nav button:hover,.nav button.active{background:#1f2937;color:#fff}.main{margin-left:250px;flex:1;padding:28px;max-width:1700px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.top h1{margin:0;font-size:28px}.top p{margin:5px 0;color:var(--muted)}.btn{border:0;border-radius:10px;padding:11px 16px;cursor:pointer;font-weight:700}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px}.metric{font-size:28px;font-weight:800;margin:7px 0}.muted{color:var(--muted);font-size:13px}.calendar-wrap{background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.cal-head{padding:18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}.month{font-size:20px;font-weight:800}.controls{display:flex;gap:8px;align-items:center}.filter{padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:#fff}.week{display:grid;grid-template-columns:repeat(7,1fr);background:#fafbfc;border-bottom:1px solid var(--line)}.week div{padding:11px;font-size:12px;font-weight:800;color:var(--muted);text-align:center}.grid{display:grid;grid-template-columns:repeat(7,1fr)}.day{min-height:155px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px;cursor:pointer}.day:hover{background:#fbfdff}.day:nth-child(7n){border-right:0}.day.empty{background:#fafbfc;cursor:default}.date{font-weight:800;font-size:13px;margin-bottom:8px}.today{display:inline-flex;width:25px;height:25px;border-radius:50%;align-items:center;justify-content:center;background:#2563eb;color:#fff}.op{font-size:11px;padding:7px 8px;border-radius:8px;margin:5px 0;background:#eff6ff;border-left:3px solid #2563eb}.op.green{background:#f0fdf4;border-left-color:#16a34a}.op.purple{background:#faf5ff;border-left-color:#7c3aed}.op.orange{background:#fff7ed;border-left-color:#ea580c}.op b{display:block;font-size:11px}.count{font-size:10px;color:var(--muted);margin-top:7px}.page{display:none}.page.active{display:block}.section{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:13px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.status{padding:5px 8px;border-radius:999px;font-size:11px;font-weight:700}.confirmed{background:#dcfce7;color:#166534}.scheduled{background:#dbeafe;color:#1e40af}.pending{background:#ffedd5;color:#9a3412}.modal-bg{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px}.modal{background:#fff;width:min(720px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:24px}.modal-bg.show{display:flex}.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:#4b5563}.field input,.field select{padding:11px;border:1px solid var(--line);border-radius:9px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}.day-detail{margin-top:18px}.doctor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.doctor{border:1px solid var(--line);border-radius:12px;padding:15px}.doctor strong{display:block}.pill{display:inline-block;margin-top:7px;padding:4px 7px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:10px;font-weight:700}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.doctor-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.sidebar{width:72px}.brand{font-size:0}.brand span{font-size:18px}.nav button{font-size:0;text-align:center}.nav button:before{content:"•";font-size:22px}.main{margin-left:72px;padding:15px}.cards{grid-template-columns:1fr}.day{min-height:120px}.op{font-size:9px}.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">Hair<span>Clinic</span> ERP</div>
+  <div class="nav">
+    <button class="active" onclick="showPage('operations',this)">✂️ Hair Operations</button>
+    <button onclick="showPage('patients',this)">👥 Patients</button>
+    <button onclick="showPage('appointments',this)">📅 Appointments</button>
+    <button onclick="showPage('finance',this)">💰 Finance</button>
+    <button onclick="showPage('doctors',this)">👨‍⚕️ Doctors</button>
+    <button onclick="showPage('accounts',this)">🔐 Accounts & Roles</button>
+  </div>
+</aside>
+<main class="main">
+  <section id="operations" class="page active">
+    <div class="top"><div><h1>Hair Transplant Operations</h1><p>Central surgery calendar — Cairo & Mansoura • Maximum 8 operations/day</p></div><button class="btn primary" onclick="openNew()">+ New Hair Transplant</button></div>
+<div class="card" style="margin-bottom:16px;padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+  <b>Branch</b>
+  <select class="filter" id="branchFilter" onchange="renderCalendar()">
+    <option>All Branches</option><option>Cairo</option><option>Mansoura</option>
+  </select>
+  <span class="muted">Daily capacity: <b>8 operations</b></span>
+  <span style="margin-left:auto" class="muted">Choose a day to see doctors, patients and available slots</span>
+</div>
+    <div class="cards">
+      <div class="card"><div class="muted">October Operations</div><div class="metric" id="totalOps">42</div><div class="muted">All scheduled procedures</div></div>
+      <div class="card"><div class="muted">Confirmed</div><div class="metric">35</div><div class="muted">Ready for surgery</div></div>
+      <div class="card"><div class="muted">Available Slots</div><div class="metric">11</div><div class="muted">Across all doctors</div></div>
+      <div class="card"><div class="muted">Doctors Working</div><div class="metric">4</div><div class="muted">October schedule</div></div>
+    </div>
+    <div class="calendar-wrap">
+      <div class="cal-head">
+        <div class="controls"><button class="btn ghost" onclick="prevMonth()">‹</button><div class="month" id="monthTitle">October 2026</div><button class="btn ghost" onclick="nextMonth()">›</button></div>
+        <div class="controls"><select class="filter" id="doctorFilter" onchange="renderCalendar()"><option>All Doctors</option><option>Dr. Ahmed Hassan</option><option>Dr. Omar Khaled</option><option>Dr. Youssef Ali</option><option>Dr. Karim Samy</option></select><button class="btn ghost" onclick="renderCalendar()">Today</button></div>
+      </div>
+      <div class="week"><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div><div>SUN</div></div>
+      <div class="grid" id="calendar"></div>
+    </div>
+    <div class="day-detail" id="dayDetail"></div>
+    <div class="section" style="margin-top:16px">
+      <div class="top" style="margin:0 0 12px"><div><h2 style="margin:0;font-size:18px">Daily Capacity</h2><p>Maximum 8 surgeries across both branches or per selected branch.</p></div></div>
+      <div id="capacitySummary" class="doctor-grid"></div>
+    </div>
+  </section>
+
+  <section id="patients" class="page">
+    <div class="top"><div><h1>Patients</h1><p>Patient records and treatment history</p></div><button class="btn primary" onclick="openNew()">+ New Patient / Surgery</button></div>
+    <div class="section"><table class="table"><thead><tr><th>Patient</th><th>Procedure</th><th>Grafts</th><th>Doctor</th><th>Status</th><th>Payment</th></tr></thead><tbody id="patientRows"></tbody></table></div>
+  </section>
+
+  <section id="appointments" class="page">
+    <div class="top"><div><h1>Appointments</h1><p>Consultations, follow-ups and PRP — separate from surgery planning</p></div></div>
+    <div class="section"><table class="table"><thead><tr><th>Time</th><th>Patient</th><th>Type</th><th>Doctor</th><th>Status</th></tr></thead><tbody>
+    <tr><td>09:00</td><td>Mahmoud Adel</td><td>Consultation</td><td>Dr. Ahmed Hassan</td><td><span class="status confirmed">Confirmed</span></td></tr>
+    <tr><td>10:30</td><td>Omar Ali</td><td>Follow-up</td><td>Dr. Omar Khaled</td><td><span class="status scheduled">Scheduled</span></td></tr>
+    <tr><td>13:00</td><td>Hany Mostafa</td><td>PRP</td><td>Dr. Youssef Ali</td><td><span class="status confirmed">Confirmed</span></td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="finance" class="page">
+    <div class="top"><div><h1>Finance</h1><p>Surgery payments and outstanding balances</p></div></div>
+    <div class="cards"><div class="card"><div class="muted">October Revenue</div><div class="metric">486,500 EGP</div></div><div class="card"><div class="muted">Collected</div><div class="metric">359,500 EGP</div></div><div class="card"><div class="muted">Outstanding</div><div class="metric">127,000 EGP</div></div><div class="card"><div class="muted">Operations</div><div class="metric">42</div></div></div>
+    <div class="section"><table class="table"><thead><tr><th>Patient</th><th>Total</th><th>Paid</th><th>Remaining</th><th>Method</th></tr></thead><tbody>
+    <tr><td>Ahmed Hassan</td><td>75,000</td><td>50,000</td><td>25,000</td><td>InstaPay</td></tr><tr><td>Omar Mohamed</td><td>68,000</td><td>68,000</td><td>0</td><td>Cash</td></tr><tr><td>Karim Ali</td><td>82,000</td><td>40,000</td><td>42,000</td><td>Card</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="accounts" class="page">
+    <div class="top"><div><h1>Accounts & Permissions</h1><p>Each team member sees only what their role allows.</p></div></div>
+    <div class="section"><table class="table"><thead><tr><th>User</th><th>Role</th><th>Branch</th><th>Patient Profile</th><th>Financials</th><th>Status</th></tr></thead><tbody>
+    <tr><td><b>Reception / Sara</b></td><td>Secretary</td><td>Cairo + Mansoura</td><td>Full</td><td><span class="status confirmed">Visible</span></td><td>Active</td></tr>
+    <tr><td><b>Dr. Ahmed Hassan</b></td><td>Doctor</td><td>Cairo</td><td>Medical only</td><td><span class="status pending">Hidden</span></td><td>Active</td></tr>
+    <tr><td><b>Dr. Omar Khaled</b></td><td>Doctor</td><td>Mansoura</td><td>Medical only</td><td><span class="status pending">Hidden</span></td><td>Active</td></tr>
+    <tr><td><b>Clinic Admin</b></td><td>Administrator</td><td>All</td><td>Full</td><td><span class="status confirmed">Visible</span></td><td>Active</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="doctors" class="page">
+    <div class="top"><div><h1>Doctors & Workload</h1><p>October surgery capacity</p></div></div>
+    <div class="doctor-grid">
+      <div class="doctor"><strong>Dr. Ahmed Hassan</strong><span class="muted">Hair Transplant Surgeon</span><br><span class="pill">14 Operations</span></div>
+      <div class="doctor"><strong>Dr. Omar Khaled</strong><span class="muted">Hair Transplant Surgeon</span><br><span class="pill">11 Operations</span></div>
+      <div class="doctor"><strong>Dr. Youssef Ali</strong><span class="muted">Hair Restoration</span><br><span class="pill">9 Operations</span></div>
+      <div class="doctor"><strong>Dr. Karim Samy</strong><span class="muted">Hair Transplant Surgeon</span><br><span class="pill">8 Operations</span></div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="modal-bg" id="modal">
+<div class="modal">
+<h2 style="margin-top:0">Book New Hair Transplant</h2>
+<p class="muted">Create a patient and reserve a surgery slot directly from the monthly operation calendar.</p>
+<div class="form">
+<div class="field"><label>Patient Name</label><input id="fName" placeholder="e.g. Ahmed Hassan"></div>
+<div class="field"><label>Phone</label><input id="fPhone" placeholder="010xxxxxxxx"></div>
+<div class="field"><label>Procedure</label><select id="fProc"><option>FUE</option><option>DHI</option><option>FUE + PRP</option></option></select></div>
+<div class="field"><label>Estimated Grafts</label><input id="fGrafts" type="number" value="3200"></div>
+<div class="field"><label>Branch</label><select id="fBranch"><option>Cairo</option><option>Mansoura</option></select></div>
+<div class="field"><label>Doctor</label><select id="fDoctor"><option>Dr. Ahmed Hassan</option><option>Dr. Omar Khaled</option><option>Dr. Youssef Ali</option><option>Dr. Karim Samy</option></select></div>
+<div class="field"><label>Operation Date</label><input id="fDate" type="date"></div>
+<div class="field"><label>Start Time</label><select id="fTime"><option>09:00</option><option>10:30</option><option>12:30</option><option>14:30</option><option>16:00</option></select></div>
+<div class="field"><label>Total Price (EGP)</label><input id="fPrice" type="number" value="75000"></div>
+<div class="field full"><label>Doctor Notes</label><input id="fNotes" placeholder="Norwood IV, donor density good, frontal restoration..."></div>
+</div>
+<div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveSurgery()">Confirm Surgery</button></div>
+</div>
+</div>
+
+<script>
+const surgeries=[
+{date:'2026-10-01',time:'09:00',patient:'Ahmed Hassan',proc:'FUE',grafts:3200,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-01',time:'13:00',patient:'Omar Ali',proc:'DHI',grafts:2800,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-02',time:'10:30',patient:'Karim Mohamed',proc:'FUE',grafts:3500,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-03',time:'09:00',patient:'Hany Adel',proc:'FUE',grafts:3000,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-03',time:'13:00',patient:'Tarek Samy',proc:'DHI',grafts:2500,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-03',time:'16:00',patient:'Mahmoud Ali',proc:'FUE',grafts:3200,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-05',time:'09:00',patient:'Youssef Mostafa',proc:'FUE',grafts:3400,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-05',time:'13:00',patient:'Mostafa Adel',proc:'DHI',grafts:2700,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-06',time:'09:00',patient:'Amr Hassan',proc:'FUE',grafts:3600,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-06',time:'12:30',patient:'Khaled Nabil',proc:'FUE',grafts:3000,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-06',time:'16:00',patient:'Islam Mahmoud',proc:'DHI',grafts:2600,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-07',time:'09:00',patient:'Sayed Ali',proc:'FUE',grafts:3300,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-07',time:'13:00',patient:'Walid Omar',proc:'FUE',grafts:3100,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-08',time:'09:00',patient:'Hossam Tarek',proc:'FUE',grafts:3500,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-08',time:'12:30',patient:'Adel Sameh',proc:'DHI',grafts:2800,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-08',time:'16:00',patient:'Mohamed Ashraf',proc:'FUE',grafts:3000,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-09',time:'10:30',patient:'Nader Ahmed',proc:'FUE',grafts:3200,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-10',time:'09:00',patient:'Ayman Salah',proc:'FUE',grafts:3400,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-10',time:'13:00',patient:'Fady George',proc:'DHI',grafts:2700,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-12',time:'09:00',patient:'Sherif Adel',proc:'FUE',grafts:3100,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-12',time:'13:00',patient:'Bassem Ali',proc:'FUE',grafts:3600,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-13',time:'09:00',patient:'Hassan Taha',proc:'DHI',grafts:2800,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-13',time:'12:30',patient:'Ehab Samir',proc:'FUE',grafts:3200,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-15',time:'09:00',patient:'Ahmed Fathy',proc:'FUE',grafts:3500,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-15',time:'12:30',patient:'Omar Said',proc:'DHI',grafts:2800,doctor:'Dr. Khaled',cls:'green'},
+{date:'2026-10-15',time:'16:00',patient:'Karim Emad',proc:'FUE',grafts:3400,doctor:'Dr. Omar Khaled',cls:'purple'},
+{date:'2026-10-16',time:'09:00',patient:'Mina Nabil',proc:'FUE',grafts:3000,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-17',time:'09:00',patient:'Mohamed Tarek',proc:'FUE',grafts:3300,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-17',time:'13:00',patient:'Ali Hany',proc:'DHI',grafts:2600,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-19',time:'09:00',patient:'Mostafa Nader',proc:'FUE',grafts:3500,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-19',time:'13:00',patient:'Yasser Adel',proc:'FUE',grafts:3100,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-20',time:'09:00',patient:'Alaa Hassan',proc:'DHI',grafts:2800,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-20',time:'12:30',patient:'Sami Mohamed',proc:'FUE',grafts:3200,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-22',time:'09:00',patient:'Tamer Ali',proc:'FUE',grafts:3500,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-22',time:'13:00',patient:'Nour El Din',proc:'DHI',grafts:2700,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-24',time:'09:00',patient:'Ramy Ashraf',proc:'FUE',grafts:3000,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-24',time:'13:00',patient:'Waleed Sameh',proc:'FUE',grafts:3300,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-26',time:'09:00',patient:'Hatem Omar',proc:'DHI',grafts:2900,doctor:'Dr. Omar Khaled',cls:'green'},
+{date:'2026-10-27',time:'09:00',patient:'Ibrahim Adel',proc:'FUE',grafts:3500,doctor:'Dr. Ahmed Hassan',cls:''},
+{date:'2026-10-29',time:'09:00',patient:'Wael Hany',proc:'FUE',grafts:3200,doctor:'Dr. Karim Samy',cls:'orange'},
+{date:'2026-10-30',time:'13:00',patient:'Adham Ali',proc:'DHI',grafts:2800,doctor:'Dr. Youssef Ali',cls:'purple'},
+{date:'2026-10-31',time:'09:00',patient:'Fares Ahmed',proc:'FUE',grafts:3400,doctor:'Dr. Ahmed Hassan',cls:''}
+];
+
+let viewDate=new Date(2026,9,1);
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');}
+function monthName(d){return d.toLocaleString('en-US',{month:'long',year:'numeric'})}
+function renderCalendar(){
+ const y=viewDate.getFullYear(),m=viewDate.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0);
+ document.getElementById('monthTitle').textContent=monthName(viewDate);
+ const cal=document.getElementById('calendar');cal.innerHTML='';
+ let monday=(first.getDay()+6)%7;
+ for(let i=0;i<monday;i++){let e=document.createElement('div');e.className='day empty';cal.appendChild(e)}
+ const filter=document.getElementById('doctorFilter').value;
+ const branchFilter=document.getElementById('branchFilter').value;
+ for(let d=1;d<=last.getDate();d++){
+  const iso=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  let list=surgeries.filter(s=>s.date===iso&&(filter==='All Doctors'||s.doctor===filter)&&(branchFilter==='All Branches'||s.branch===branchFilter));
+  let el=document.createElement('div');el.className='day';el.onclick=()=>showDay(iso);
+  let date=document.createElement('div');date.className='date';date.innerHTML=(iso==='2026-10-07'?'<span class="today">'+d+'</span>':d);el.appendChild(date);
+  list.slice(0,3).forEach(s=>{let op=document.createElement('div');op.className='op '+(s.cls||'');op.innerHTML=`<b>${s.time} • ${s.patient}</b>${s.proc} • ${s.grafts.toLocaleString()} grafts<br><span class="muted">${s.doctor} • ${s.branch||'Cairo'}</span>`;el.appendChild(op)});
+  if(list.length>3){let c=document.createElement('div');c.className='count';c.textContent=`+ ${list.length-3} more`;el.appendChild(c)}
+  if(list.length) {let c=document.createElement('div');c.className='count';c.textContent=`${list.length} operation${list.length>1?'s':''}`;el.appendChild(c)}
+  cal.appendChild(el)
+ }
+ renderCapacity();
+}
+function renderCapacity(){
+ const box=document.getElementById('capacitySummary'); if(!box)return;
+ const branch=document.getElementById('branchFilter').value;
+ const days=[1,7,15,24,31].map(d=>`2026-10-${String(d).padStart(2,'0')}`);
+ box.innerHTML=days.map(iso=>{
+   const list=surgeries.filter(s=>s.date===iso&&(branch==='All Branches'||s.branch===branch));
+   const left=Math.max(0,8-list.length);
+   const doctors=[...new Set(list.map(x=>x.doctor))];
+   return `<div class="doctor"><strong>${new Date(iso+'T00:00:00').toLocaleDateString('en-US',{day:'numeric',month:'short'})}</strong><span class="muted">${list.length}/8 operations booked</span><br><span class="pill">${left} available</span><div class="muted" style="margin-top:8px">${doctors.length?doctors.join('<br>'):'No doctors assigned yet'}</div></div>`;
+ }).join('');
+}
+function showDay(iso){
+ const branch=document.getElementById('branchFilter').value;
+ const list=surgeries.filter(s=>s.date===iso&&(branch==='All Branches'||s.branch===branch));
+ const box=document.getElementById('dayDetail');
+ if(!list.length){box.innerHTML='<div class="section"><b>No surgeries scheduled.</b><p class="muted">This is an available day. You can book a new patient directly.</p><button class="btn primary" onclick="openNew(\''+iso+'\')">+ Book Operation</button></div>';return}
+ box.innerHTML='<div class="section"><div class="top" style="margin:0 0 12px"><div><h2 style="margin:0">'+new Date(iso+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h2><p>'+list.length+'/8 operations booked • '+(8-list.length)+' available</p></div><button class="btn primary" onclick="openNew(\''+iso+'\')">+ Book Another</button></div>'+list.map(s=>`<div style="padding:13px;border-top:1px solid var(--line)"><b>${s.time} — ${s.patient}</b><br><span class="muted">${s.proc} • ${s.grafts.toLocaleString()} grafts • ${s.doctor} • ${s.branch||'Cairo'}</span></div>`).join('')+'</div>';
+}
+function prevMonth(){viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);renderCalendar()}
+function nextMonth(){viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar()}
+function openNew(date){
+ document.getElementById('modal').classList.add('show');
+ if(date)document.getElementById('fDate').value=date; else document.getElementById('fDate').value='2026-10-15';
+}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveSurgery(){
+ const name=document.getElementById('fName').value.trim(),date=document.getElementById('fDate').value,doctor=document.getElementById('fDoctor').value,branch=document.getElementById('fBranch').value;
+ if(!name||!date){alert('Please enter patient name and operation date.');return}
+ const current=surgeries.filter(x=>x.date===date).length;
+ if(current>=8){alert('This day is FULL — maximum 8 operations per day.');return;}
+ const s={date,time:document.getElementById('fTime').value,patient:name,proc:document.getElementById('fProc').value,grafts:+document.getElementById('fGrafts').value||0,doctor,branch,cls:doctor.includes('Omar')?'green':doctor.includes('Youssef')?'purple':doctor.includes('Karim')?'orange':''};
+ surgeries.push(s);document.getElementById('totalOps').textContent=surgeries.filter(x=>x.date.startsWith('2026-10')).length;closeModal();renderCalendar();showDay(date);
+ alert('Surgery booked successfully for '+name+' on '+date+' at '+s.time+'.');
+}
+function fillPatients(){
+ const rows=document.getElementById('patientRows');
+ rows.innerHTML=surgeries.slice(0,12).map((s,i)=>`<tr><td><b>${s.patient}</b><br><span class="muted">PT-${String(1248-i).padStart(6,'0')}</span></td><td>${s.proc}</td><td>${s.grafts.toLocaleString()}</td><td>${s.doctor}</td><td><span class="status ${i%3===0?'confirmed':'scheduled'}">${i%3===0?'Confirmed':'Scheduled'}</span></td><td>${i%3===0?'Paid':'Partial'}</td></tr>`).join('');
+}
+renderCalendar();fillPatients();renderCapacity();
+</script>
+</body>
+</html>
